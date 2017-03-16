@@ -1,7 +1,5 @@
 package Chapter17;
 
-import Chapter10.E;
-
 import java.util.*;
 
 /**
@@ -9,9 +7,10 @@ import java.util.*;
  */
 public class LinkedListImplementSortedSet<E extends Number> {
     LinkedList<E> linkedList;
+    LinkedList<E> linkedList1 = new LinkedList<>();
 
     public LinkedListImplementSortedSet(LinkedList<E> linkedList) {
-        linkedList = new LinkedList<E>();
+        this.linkedList = linkedList;
 
     }
 
@@ -62,20 +61,25 @@ public class LinkedListImplementSortedSet<E extends Number> {
         return linkedList.get(i);
     }
 
-    public LinkedList<E> tailSet(E fromElement) {
+    public LinkedListImplementSortedSet<E> tailSet(E fromElement) {
+        linkedList1.clear();
         int i = linkedList.indexOf(fromElement);
-        LinkedList<E> linkedList1 = new LinkedList<>();
         linkedList1.addAll(linkedList.subList(i,getlastIndex()));
-        return linkedList1;
+        return new LinkedListImplementSortedSet<E>(linkedList1);
+
     }
 
     public LinkedList<E> headSet(E toElement) {
+        linkedList1.clear();
         int i = linkedList.indexOf(toElement);
-        LinkedList<E> linkedList2 = new LinkedList<>();
-        linkedList2.addAll(linkedList.subList(0,i));
-        return linkedList2;
+        linkedList1.addAll(linkedList.subList(0,i));
+        return linkedList1;
     }
 
+    @Override
+    public String toString() {
+        return linkedList.toString();
+    }
 
     public static void main(String[] args) {
         LinkedListImplementSortedSet<Integer> testList = new LinkedListImplementSortedSet<>();
@@ -85,7 +89,7 @@ public class LinkedListImplementSortedSet<E extends Number> {
             testList.add(number);
         }
 
-        for (int i = 0; i < testList.size() ; i++) {
+        for (int i = 0; i < testList.size(); i++) {
             System.out.println(testList.get(i));
         }
 
@@ -93,6 +97,7 @@ public class LinkedListImplementSortedSet<E extends Number> {
 
 
         System.out.println(testList.tailSet(61));
+
         System.out.println(testList.headSet(61));
     }
 }
