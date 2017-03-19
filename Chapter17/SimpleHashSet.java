@@ -6,7 +6,8 @@ import java.util.*;
  * Created by Ryan on 2017/3/17.
  */
 public class SimpleHashSet<T> extends AbstractSet<T> {
-    static final int SIZE = 997;
+    static int SIZE = 997;
+    static int count = 0;
     LinkedList<T>[] buckets = new LinkedList[SIZE];
     public boolean add(T t) {
         int index = Math.abs(t.hashCode()) % SIZE;
@@ -15,8 +16,8 @@ public class SimpleHashSet<T> extends AbstractSet<T> {
         LinkedList<T> bucket = buckets[index];
         if (bucket.contains(t))
             return false;
-        else
-            return bucket.add(t);
+        count++;
+        return bucket.add(t);
     }
 
     public boolean remove(Object o) {
@@ -24,8 +25,10 @@ public class SimpleHashSet<T> extends AbstractSet<T> {
         if (buckets[index] == null)
             return false;
         for (T t:buckets[index]) {
-            if (t.equals(o))
+            if (t.equals(o)) {
+                count--;
                 return buckets[index].remove(t);
+            }
         }
         return false;
     }
@@ -79,6 +82,27 @@ public class SimpleHashSet<T> extends AbstractSet<T> {
         return result.toString();
     }
 
+
+    private void rehash() {
+        if (count > SIZE/2) {
+            SIZE = SIZE * 2;
+            LinkedList[] newBuckets = new LinkedList[getNumber(SIZE)];
+            System.arraycopy(buckets,0,newBuckets,0,SIZE/2);
+        }
+
+    }
+
+    private int getNumber(int number) {
+        int needNumber = 0;
+        for (int i = 0; i < number; i++) {
+            if (number % i == 0) {
+                getNumber(number++);
+                needNumber = number;
+            }
+        }
+        return needNumber;
+    }
+
     public static void main(String[] args) {
         SimpleHashSet<Integer> simpleHashSet = new SimpleHashSet<>();
         Random random = new Random(47);
@@ -92,6 +116,7 @@ public class SimpleHashSet<T> extends AbstractSet<T> {
             if (simpleHashSet.buckets[i] != null)
                 System.out.println(simpleHashSet.buckets[i].toString());
         }
+
 
         System.out.println(simpleHashSet);
     }
