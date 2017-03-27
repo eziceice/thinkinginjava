@@ -7,9 +7,11 @@ import java.util.function.Consumer;
 /**
  * Created by Ryan on 2017/2/16.
  */
-public class Fibonacci implements Generator, Iterable<Integer> {
+public class Fibonacci implements Generator, Iterable<Integer>, Runnable {
 
-    private int n = 0;
+    private int n;
+    private static int count = 0;
+    private final int id = count++;
 
     public Fibonacci(int n) {
         this.n = n;
@@ -45,10 +47,14 @@ public class Fibonacci implements Generator, Iterable<Integer> {
 
 
     public static void main(String[] args) {
-        Fibonacci f = new Fibonacci(20);
-        for (Integer i: f
-             ) {
-            System.out.println(i);
+        for (int i = 0; i < 30; i++) {
+            Fibonacci fibonacci = new Fibonacci(i);
+            new Thread(fibonacci).start();
         }
+    }
+
+    @Override
+    public void run() {
+        System.out.println(fib(n) + " ############ " + id);
     }
 }
