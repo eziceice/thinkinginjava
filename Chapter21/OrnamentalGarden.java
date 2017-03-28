@@ -21,7 +21,7 @@ public class OrnamentalGarden {
         Entrance.cancel();
         executorService.shutdown();
         if(!executorService.awaitTermination(200,TimeUnit.MILLISECONDS))
-            System.out.println("Some Service are not terminated.");
+            executorService.shutdownNow();
         System.out.println("Total: " + Entrance.getTotalCount());
         System.out.println("Sum of Entrances: " + Entrance.sumEntrances());
     }
