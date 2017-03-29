@@ -19,13 +19,15 @@ public class BusyWait {
         executorService.shutdown();
 
     }
-
-    public synchronized void setFlag(boolean flag) {
-        this.flag = flag;
+    public synchronized void flag() {
+        flag = true;
+        notifyAll();
     }
 
-    public synchronized boolean isFlag() {
-        return flag;
+    public synchronized void waitForFlag() throws InterruptedException {
+        while (!flag) {
+            wait();
+        }
     }
 }
 
@@ -38,13 +40,11 @@ class TaskA implements Runnable {
 
     @Override
     public void run() {
-        synchronized (busyWait) {
-            try {
-                Thread.sleep(5000);
-                busyWait.setFlag(true);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        try {
+            Thread.sleep(500);
+            busyWait.flag();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 }
@@ -58,10 +58,11 @@ class TaskB implements Runnable {
 
     @Override
     public void run() {
-        while (busyWait.isFlag()) {
-            System.out.println("enter in while loop");
-            busyWait.setFlag(false);
-            System.out.println("hahahahaha");
+        try {
+            busyWait.waitForFlag();
+            System.out.println("Get wait");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 }
