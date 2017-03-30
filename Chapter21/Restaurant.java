@@ -3,6 +3,9 @@ package Chapter21;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Created by Ryan on 2017/3/29.
@@ -42,6 +45,12 @@ class Meal {
 }
 
 class Waiter implements Runnable {
+    /**
+     *          显示锁和condition
+     *
+    Lock lock = new ReentrantLock();
+    Condition condition = lock.newCondition();
+     */
     private Restaurant restaurant;
 
     public Waiter(Restaurant restaurant) {
@@ -53,8 +62,9 @@ class Waiter implements Runnable {
         try {
             while (!Thread.interrupted()) {
                 synchronized (this) {
+                    //lock.lock();
                     while (restaurant.meal == null || !restaurant.isCleaned)
-                        wait();
+                        wait();//condition.await();
                 }
 
                 System.out.println("Waiter Got the Meal" + restaurant.meal);
@@ -67,6 +77,7 @@ class Waiter implements Runnable {
                 synchronized (restaurant.chief) {
                     restaurant.meal = null;
                     restaurant.chief.notifyAll();
+                    //restaurant.chief.condition.notifyAll();
                 }
             }
 
@@ -108,6 +119,12 @@ class BusyBoy implements Runnable {
 }
 
 class Chief implements Runnable {
+    /**
+     *          显示锁和condition
+     *
+     Lock lock = new ReentrantLock();
+     Condition condition = lock.newCondition();
+     */
     private Restaurant restaurant;
     private int count = 0;
 
